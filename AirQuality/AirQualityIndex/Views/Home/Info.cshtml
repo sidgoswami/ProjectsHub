@@ -1,0 +1,25 @@
+﻿
+@{
+    ViewData["Title"] = "Info";
+}
+
+The Site fetches the Air Quality Index of Indian cities using an API provided by the government provided API.
+
+<table>
+    <tr>
+        <td>
+            <form asp-controller="RealTime" asp-action="RealTimeIndex">
+                <button type="submit" class="btn btn-success">Real Time Data</button>
+            </form>
+        </td>
+        <td>
+            <form asp-controller="StoredData" asp-action="StoredDataIndex">
+                <button type="submit" class="btn btn-success">Daily Stored Data</button>
+            </form>
+        </td>
+    </tr>
+</table>
+
+
+
+

@@ -1,0 +1,32 @@
+﻿
+@{
+    ViewData["Title"] = "StoredDataView";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Stored Data View</h1>
+</div>
+
+
+<input type="button" value="Refresh Data" id="btnRefreshDb" class="btn btn-success"/>
+
+
+<script>
+    window.onload = function () {
+        let config = {
+            AQDbRefreshUrl: '@Url.ActionLink("AirQualityFullDbRefresh", "Home")',
+            AQFetchUrl: '@Url.ActionLink("FetchAirQuality", "Home")',
+            AQTableBodyId: 'AirQualityIndexTableBody',
+            AQTableId: 'AirQualityIndexTable',
+            AQTableWrapper: 'AirQualityTableWrapper'
+        }
+        let aq = new AQ(config);
+
+
+        $('#btnRefreshDb').click(function () {
+            aq.refreshAQRecordsInDb();
+        })
+
+    };
+
+</script>

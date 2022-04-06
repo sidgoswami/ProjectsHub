@@ -1,0 +1,88 @@
+﻿@{
+    ViewData["Title"] = "RealTime";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Real Time View</h1>
+</div>
+
+
+<section>
+    <span>
+        Filter the records real time or leave the filters blank for a full fetch
+    </span>
+    <div style="display:flex;justify-content:space-evenly;">
+        <div>
+            <label for="txtAreaStates">
+                States:
+            </label>
+            <textarea id="txtAreaStates" placeholder="States(comma separated)" class="form-control"></textarea>
+        </div>
+        <div>
+            <label for="txtAreaCities">
+                Cities:
+            </label>
+            <textarea id="txtAreaCities" placeholder="Cities(comma separated)" class="form-control"></textarea>
+        </div>
+        <div style="align-self:center;">
+            <input type="button" id="btnFetch" value="Fetch" class="btn btn-success" />
+        </div>
+    </div>    
+</section>
+<br/>
+<section id="AirQualityTableWrapper">
+    <table id="AirQualityIndexTable">
+        <thead id="AirQualityIndexTableHead">
+            <tr>
+                <th>ID</th>
+                <th>Country</th>
+                <th>State</th>
+                <th>City</th>
+                <th>Station</th>
+                <th>Last_Update</th>
+                <th>Pollutant_ID</th>
+                <th>Pollutant_Min</th>
+                <th>Pollutant_Max</th>
+                <th>Pollutant_Avg</th>
+                <th>Pollutant_Unit</th>
+            </tr>
+        </thead>
+        <tbody id="AirQualityIndexTableBody"></tbody>
+    </table>
+</section>
+
+<script>
+    window.onload = function () {
+        let config = {
+            AQFetchUrl: '@Url.ActionLink("FetchAirQuality", "RealTime")',
+            AQTableBodyId: 'AirQualityIndexTableBody',
+            AQTableId: 'AirQualityIndexTable',
+            AQTableWrapper: 'AirQualityTableWrapper'
+        }
+        let aq = new AQ(config);
+        
+
+        $('#btnFetch').click(function () {
+            let strFilter = '';
+            let states = $('#txtAreaStates').val();
+            let cities = $('#txtAreaCities').val();
+            let arrStates = states.split(',');
+            let arrCities = cities.split(',');
+            console.dir(arrStates);
+            console.dir(arrCities);
+            $.each(arrStates, function (index, value) {
+                if (value != '') {
+                    strFilter += `state,${value};`;
+                }
+            });
+            $.each(arrCities, function (index, value) {
+                if (value != '') {
+                    strFilter += `city,${value};`;
+                }
+            });
+            strFilter = strFilter.substr(0, strFilter.length - 1);
+            aq.fetchAQIndexes(0, 10, strFilter);//state,Bihar;city,Arrah
+        })
+
+    };
+</script>
