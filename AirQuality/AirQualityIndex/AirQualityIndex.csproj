@@ -4,6 +4,10 @@
     <TargetFramework>net5.0</TargetFramework>
     <UserSecretsId>AirQualityIndexSecrets</UserSecretsId>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Services\AQMySqlService.cs" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="jQuery" Version="3.6.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />

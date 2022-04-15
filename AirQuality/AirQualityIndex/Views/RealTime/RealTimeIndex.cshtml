@@ -30,26 +30,8 @@
     </div>
 </section>
 <br />
-<section id="AirQualityTableWrapper">
-    <table id="AirQualityIndexTable">
-        <thead id="AirQualityIndexTableHead">
-            <tr>
-                <th>ID</th>
-                <th>Country</th>
-                <th>State</th>
-                <th>City</th>
-                <th>Station</th>
-                <th>Last_Update</th>
-                <th>Pollutant_ID</th>
-                <th>Pollutant_Min</th>
-                <th>Pollutant_Max</th>
-                <th>Pollutant_Avg</th>
-                <th>Pollutant_Unit</th>
-            </tr>
-        </thead>
-        <tbody id="AirQualityIndexTableBody"></tbody>
-    </table>
-</section>
+<partial name="_AQTablePartialView"/>
+
 
 <script>
     window.onload = function () {

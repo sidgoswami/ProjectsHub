@@ -10,18 +10,49 @@
 
 <input type="button" value="Refresh Data" id="btnRefreshDb" class="btn btn-success" />
 
+<div>
+    <label for="idLastRefreshed"> Last Refreshed: </label>
+    <input id="idLastRefreshed" disabled/>
+</div>
+
+
+<section>
+    <span>
+        Filter the records real time or leave the filters blank for a full fetch from database =>
+    </span>
+    <div style="display:flex;justify-content:space-evenly;">
+        <div>
+            <label for="ddStates">
+                States:
+            </label>
+            <select id="ddStates"  placeholder="Select State" class="form-control" onchange="aq.refreshCityListByState($event)" />
+        </div>
+        <div>
+            <label for="ddCities">
+                Cities:
+            </label>
+            <select id="ddCities" placeholder="Select City" class="form-control" />
+        </div>
+        <div style="align-self:center;">
+            <input type="button" id="btnFetchForSelection" value="Fetch" class="btn btn-success" />
+        </div>
+    </div>
+</section>
+
+<partial name="_AQTablePartialView"/>
 
 <script>
     window.onload = function () {
         let config = {
             AQDbRefreshUrl: '@Url.ActionLink("AirQualityFullDbRefresh", "StoredData")',
             AQFetchUrl: '@Url.ActionLink("FetchAirQuality", "RealTime")',
+            AQGetCityForStateUrl: '@Url.ActionLink("GetCityForState", "StoredData")',
+            AQLastRefreshUrl: '@Url.ActionLink("GetLastRefreshed", "StoredData")',
             AQTableBodyId: 'AirQualityIndexTableBody',
             AQTableId: 'AirQualityIndexTable',
             AQTableWrapper: 'AirQualityTableWrapper'
         }
         let aq = new AQ(config);
-
 
         $('#btnRefreshDb').click(function () {
             aq.refreshAQRecordsInDb();

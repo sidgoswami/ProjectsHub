@@ -1,12 +1,25 @@
 ﻿function AQ(config) {   
-    let fetchRealTimeUrl = '';
-    let refreshAQRecordsInDbUrl = '';
     let aqTable = undefined;
 
-    function init(config) {
-        fetchRealTimeUrl = config.AQFetchUrl;
-        refreshAQRecordsInDbUrl = config.AQDbRefreshUrl;
+    const UI = {
+        AQTableBodyId: `#${config.AQTableBodyId}`,
+        AQTableId: `#${config.AQTableId}`,
+        AQTableWrapper: `#${config.AQTableWrapper}`,
+        ddCities: "#ddCities",
+        ddStates: "#ddStates",
+        lblLastRefreshed: "#idLastRefreshed"
+    }
+
+    const urls = {
+        fetchRealTime: config.AQFetchUrl,
+        refreshAQRecordsInDb: config.AQDbRefreshUrl,
+        getCityForState: config.AQGetCityForStateUrl,
+        getLastRefresh: config.AQLastRefreshUrl
+    }
+    
+    function init() {
         hideAQTable();
+        refreshLastRefreshLabel();
     }
 
     function fetchAQIndexes(offset, limit, filters) {
@@ -16,7 +29,7 @@
             filters: filters
         }
         $.ajax({
-            url: `${fetchRealTimeUrl}`,
+            url: `${urls.fetchRealTime}`,
             type: "GET",
             contentType: 'application/json',
             data: input,
@@ -30,15 +43,15 @@
     }
 
     function clearTableBody() {
-        $(`#${config.AQTableBodyId}`).html('');
+        $(UI.AQTableBodyId).html('');
     }
 
     function hideAQTable() {
-        $(`#${config.AQTableWrapper}`).hide();
+        $(UI.AQTableWrapper).hide();
     }
 
     function showAQTable() {
-        $(`#${config.AQTableWrapper}`).show();
+        $(UI.AQTableWrapper).show();
     }
 
     function generateAQTable(tableContent, filters) {
@@ -64,8 +77,8 @@
                                     <td>${value.pollutant_unit}</td>
                                 </tr>`;
             });
-            $(`#${config.AQTableBodyId}`).html(tablehtml);            
-            aqTable = $(`#${config.AQTableId}`).DataTable({
+            $(UI.AQTableBodyId).html(tablehtml);            
+            aqTable = $(UI.AQTableId).DataTable({
                 "language": {
                     "emptyTable": `<span class="alert">No data available for the selected filter : ${filters}</span>`
                 }
@@ -79,14 +92,19 @@
 
     function refreshAQRecordsInDb() {
         $.ajax({
-            url: `${refreshAQRecordsInDbUrl}`,
+            url: `${urls.refreshAQRecordsInDb}`,
             type: "GET",
             contentType: 'application/json',
             success: function (data) {
                 console.log(data);
                 console.dir(data);
-                if (data == true) {
+                if (data.success) {
                     alert("The DB records are now refreshed");
+
+                    //Call toast
+                    refreshStateList(data.states);
+                    refreshCityList(data.cities);
+                    refreshLastRefreshLabel(data.lastRefreshed);
                 }
                 else {
                     alert("Unable to refresh table in database");
@@ -98,10 +116,81 @@
         });
     }
 
+    function refreshStateList(statesInDb) {
+        let statesOptions = [];
+        $.each(statesInDb, function (index, state) {
+            statesOptions.push(`<option>${state}</option>`);
+        })
+        $(UI.ddStates).html(statesOptions.concat());
+    }
+
+    function refreshCityList(citiesInDb) {
+        let citiesOptions = [];        
+        $.each(citiesInDb, function (index, city) {
+            citiesOptions.push(`<option>${city}</option>`);
+        })
+        $(UI.ddCities).html(citiesOptions.concat());
+    }
+
+    function refreshLastRefreshLabel(lastRefresh) {
+        if (lastRefresh == undefined) {
+            $.ajax({
+                url: `${urls.getLastRefresh}`,
+                type: "GET",
+                contentType: 'application/json',
+                success: function (response) {
+                    console.log(response);
+                    console.dir(response);
+                    if (response.success) {
+                        lastRefresh = response.data;
+                    }
+                    else {
+                        alert(`${response.message}. Please refresh the stored records`);
+                        lastRefresh = 'NA';
+                    }
+                    $(UI.lblLastRefreshed).val(lastRefresh);
+                },
+                error: function (data) {
+                    console.log(data);
+                }
+            });
+        }
+        else {
+            $(UI.lblLastRefreshed).val(lastRefresh);
+        }
+    }
+
+    function refreshCityListByState(state) {
+        console.log(state);
+        console.dir(state);
+        $.ajax({
+            url: `${urls.getCityForState}`,
+            type: "GET",
+            data: {"State": state},
+            contentType: 'application/json',
+            success: function (response) {
+                console.log(response);
+                console.dir(response);
+                if (response.success) {
+                    alert(response.message);
+                    //Call toast
+                    refreshStateList(response.data);
+                }
+                else {
+                    alert("Unable to refresh table in database");
+                }
+            },
+            error: function (data) {
+                console.log(data);
+            }
+        });
+    }
+
     init(config);
 
     return {
         fetchAQIndexes: fetchAQIndexes,
-        refreshAQRecordsInDb: refreshAQRecordsInDb
+        refreshAQRecordsInDb: refreshAQRecordsInDb,
+        refreshCityListByState: refreshCityListByState
     }
 }

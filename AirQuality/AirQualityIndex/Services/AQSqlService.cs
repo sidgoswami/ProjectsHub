@@ -8,6 +8,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using GeneralHelper;
+using GeneralHelper.Models;
 
 namespace AirQualityIndex.Services
 {
@@ -21,24 +22,38 @@ namespace AirQualityIndex.Services
             _connectionString = _appSettings.ConnectionString;
         }
 
-        public bool ClearTable(string tableName)
+        public bool ClearTable()
         {
-            if (string.IsNullOrWhiteSpace(tableName))
+            using (var sqlConnection = new SqlConnection(_connectionString))
             {
-                return false;
-            }
-            else
-            {
-                using (var sqlConnection = new SqlConnection(_connectionString))
+                string query = $"DELETE FROM {_appSettings.StorageTableName}";
+                using (var sqlCommand = new SqlCommand(query, sqlConnection))
                 {
-                    var sqlCommand = new SqlCommand();
-                    //sqlCommand.CommandText = $"DELETE FROM QUOTENAME({})"
-                    return true;
+                    try
+                    {
+                        sqlConnection.Open();
+                        var rowsAffected = sqlCommand.ExecuteNonQuery();
+                        if (rowsAffected >= 0)
+                        {
+                            return true;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        throw;
+                    }
+                    finally
+                    {
+                        sqlConnection.Close();
+                    }
+                    return false;
                 }
+
+                return true;
             }
         }
 
-        public bool WriteToDb(List<Record> records)
+        public GenericResponse<string> WriteToDb(List<Record> records)
         {
             var tableName = _appSettings.StorageTableName;
             using (SqlConnection sqlConnection = new SqlConnection(_connectionString))
@@ -51,11 +66,11 @@ namespace AirQualityIndex.Services
                     {
                         var dt = records.ToDataTable<Record>();
                         sqlBulkCopy.WriteToServer(dt);
+                        return new GenericResponse<string>(true, "", "API data written to database.");
                     }
                     catch (Exception ex)
                     {
-                        return false;
-                        throw;
+                        return new GenericResponse<string>(false, ex.Message, "Error in writing data to database.");
                     }
                     finally
                     {
@@ -63,7 +78,81 @@ namespace AirQualityIndex.Services
                     }
                 }
             }
-            return true;
+        }
+
+        public List<string> GetAllCities(string state)
+        {
+            try
+            {
+                List<string> lst = new List<string>();
+                using (var sqlConnection = new SqlConnection(_connectionString))
+                {
+                    string query = "SELECT * FROM AirQualityRecords WHERE state = @state";
+                    using (var sqlCommand = new SqlCommand(query, sqlConnection))
+                    {
+                        sqlCommand.Parameters.Add(new SqlParameter("@state", state));                        
+                        try
+                        {
+                            sqlConnection.Open();
+                            SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
+                            while (sqlDataReader.Read())
+                            {
+                                lst.Add((string)sqlDataReader[0]);
+                            }
+                            sqlDataReader.Close();
+                            return lst;
+                        }
+                        catch (Exception ex)
+                        {
+                            throw;
+                        }
+                        finally
+                        {
+                            sqlConnection.Close();
+                        }
+                    }
+                }
+                return lst;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public string GetLastRefreshed()
+        {
+            try
+            {
+                List<string> lst = new List<string>();
+                using (var sqlConnection = new SqlConnection(_connectionString))
+                {
+                    string query = "SELECT TOP 1 last_update FROM AirQualityRecords ORDER BY LAST_UPDATE DESC";
+                    using (var sqlCommand = new SqlCommand(query, sqlConnection))
+                    {
+                        try
+                        {
+                            sqlConnection.Open();
+                            return sqlCommand.ExecuteScalar().ToString();
+                        }
+                        catch (Exception ex)
+                        {
+                            throw;
+                        }
+                        finally
+                        {
+                            sqlConnection.Close();
+                        }
+                    }
+                }
+                return "";
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
     }
 }
