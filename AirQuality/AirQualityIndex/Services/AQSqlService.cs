@@ -87,7 +87,7 @@ namespace AirQualityIndex.Services
                 List<string> lst = new List<string>();
                 using (var sqlConnection = new SqlConnection(_connectionString))
                 {
-                    string query = "SELECT * FROM AirQualityRecords WHERE state = @state";
+                    string query = "SELECT DISTINCT city FROM AirQualityRecords WHERE state = @state";
                     using (var sqlCommand = new SqlCommand(query, sqlConnection))
                     {
                         sqlCommand.Parameters.Add(new SqlParameter("@state", state));                        
@@ -117,6 +117,84 @@ namespace AirQualityIndex.Services
             catch (Exception)
             {
 
+                throw;
+            }
+        }
+
+        public List<string> GetAllCities()
+        {
+            try
+            {
+                List<string> lst = new List<string>();
+                using (var sqlConnection = new SqlConnection(_connectionString))
+                {
+                    string query = "SELECT DISTINCT city FROM AirQualityRecords";
+                    using (var sqlCommand = new SqlCommand(query, sqlConnection))
+                    {
+                        try
+                        {
+                            sqlConnection.Open();
+                            SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
+                            while (sqlDataReader.Read())
+                            {
+                                lst.Add((string)sqlDataReader[0]);
+                            }
+                            sqlDataReader.Close();
+                            return lst;
+                        }
+                        catch (Exception ex)
+                        {
+                            throw;
+                        }
+                        finally
+                        {
+                            sqlConnection.Close();
+                        }
+                    }
+                }
+                return lst;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public List<string> GetAllStates()
+        {
+            try
+            {
+                List<string> lst = new List<string>();
+                using (var sqlConnection = new SqlConnection(_connectionString))
+                {
+                    string query = "SELECT DISTINCT state FROM AirQualityRecords";
+                    using (var sqlCommand = new SqlCommand(query, sqlConnection))
+                    {
+                        try
+                        {
+                            sqlConnection.Open();
+                            SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
+                            while (sqlDataReader.Read())
+                            {
+                                lst.Add((string)sqlDataReader[0]);
+                            }
+                            sqlDataReader.Close();
+                            return lst;
+                        }
+                        catch (Exception ex)
+                        {
+                            throw;
+                        }
+                        finally
+                        {
+                            sqlConnection.Close();
+                        }
+                    }
+                }
+                return lst;
+            }
+            catch (Exception)
+            {
                 throw;
             }
         }
@@ -153,6 +231,54 @@ namespace AirQualityIndex.Services
 
                 throw;
             }
+        }
+
+        public DataTable GetAQData(string state, string city)
+        {
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                string query = "";
+                if (!string.IsNullOrWhiteSpace(city) && !string.IsNullOrWhiteSpace(state))
+                {
+                    query = $"SELECT * FROM AirQualityRecords WHERE state = @state and city = @city";
+                }
+                else if (!string.IsNullOrWhiteSpace(state))
+                {
+                    query = $"SELECT * FROM AirQualityRecords WHERE state = @state";
+                }
+                else if (!string.IsNullOrWhiteSpace(city))
+                {
+                    query = $"SELECT * FROM AirQualityRecords WHERE city = @city ";
+                }
+                using (var sqlCommand = new SqlCommand(query, sqlConnection))
+                {
+                    try
+                    {
+                        if (!string.IsNullOrWhiteSpace(state))
+                        {
+                            sqlCommand.Parameters.Add(new SqlParameter("@state", state));
+                        }
+                        if (!string.IsNullOrWhiteSpace(city))
+                        {
+                            sqlCommand.Parameters.Add(new SqlParameter("@city", city));
+                        }
+                        sqlConnection.Open();
+                        DataTable dt = new DataTable();
+                        SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(sqlCommand);
+                        sqlDataAdapter.Fill(dt);
+                        return dt;
+                    }
+                    catch (Exception ex)
+                    {
+                        throw;
+                    }
+                    finally
+                    {
+                        sqlConnection.Close();
+                    }
+                }
+            }
+            return null;
         }
     }
 }

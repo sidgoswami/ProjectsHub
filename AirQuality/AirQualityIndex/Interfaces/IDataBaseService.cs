@@ -13,6 +13,10 @@ namespace AirQualityIndex.Interfaces
         GenericResponse<string> WriteToDb(List<Record> lst);
         bool ClearTable();
         List<string> GetAllCities(string state);
+        List<string> GetAllCities();
+        List<string> GetAllStates();
         string GetLastRefreshed();
+
+        DataTable GetAQData(string state, string city);
     }
 }

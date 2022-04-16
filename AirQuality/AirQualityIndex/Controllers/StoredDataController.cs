@@ -1,10 +1,12 @@
 ﻿using AirQualityIndex.Interfaces;
+using AirQualityIndex.Models;
 using GeneralHelper.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GeneralHelper;
 
 namespace AirQualityIndex.Controllers
 {
@@ -42,8 +44,8 @@ namespace AirQualityIndex.Controllers
                         string lastRefreshed = _dbService.GetLastRefreshed();
                         var obj = new
                         {
-                            Cities = fetchedAirQuality.Select(aq => aq.city).ToList<string>(),
-                            States = fetchedAirQuality.Select(aq => aq.state).ToList<string>(),
+                            Cities = fetchedAirQuality.Select(aq => aq.city).Distinct().ToList<string>(),
+                            States = fetchedAirQuality.Select(aq => aq.state).Distinct().ToList<string>(),
                             LastRefreshed = lastRefreshed
                         };
                         var genericSuccessResponse = new GenericResponse<object>(true, obj, $"Db Refreshed with data of {lastRefreshed}");
@@ -72,7 +74,7 @@ namespace AirQualityIndex.Controllers
         }
 
         /// <summary>
-        /// Get all the cities for state
+        /// Get all the cities for specific state
         /// </summary>
         /// <param name="state"></param>
         /// <returns></returns>
@@ -87,6 +89,47 @@ namespace AirQualityIndex.Controllers
             }
             var failedResponse = new GenericResponse<List<string>>(false, fetchedCities, $"No cities fetched for state: {state}");
             return Json(failedResponse);
+        }
+
+        /// <summary>
+        /// Get all cities from the stored data in database
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("GetAllCities")]
+        public JsonResult GetAllCities()
+        {
+            var fetchedCities = _dbService.GetAllCities();
+            if (fetchedCities != null && fetchedCities.Count > 0)
+            {
+                var successResponse = new GenericResponse<List<string>>(true, fetchedCities, "Fetched cities Successfully");
+                return Json(successResponse);
+            }
+            var failedResponse = new GenericResponse<List<string>>(false, fetchedCities, $"No cities fetched from database.");
+            return Json(failedResponse);
+        }
+
+        /// <summary>
+        /// Get all states from the stored data in database
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("GetAllStates")]
+        public JsonResult GetAllStates()
+        {
+            var fetchedStates = _dbService.GetAllStates();
+            if (fetchedStates != null && fetchedStates.Count > 0)
+            {
+                var successResponse = new GenericResponse<List<string>>(true, fetchedStates, "Fetched states Successfully");
+                return Json(successResponse);
+            }
+            var failedResponse = new GenericResponse<List<string>>(false, fetchedStates, $"No states fetched from database");
+            return Json(failedResponse);
+        }
+
+        [HttpGet("GetAQStoredIndexes")]
+        public JsonResult GetAQStoredIndexes(string state, string city)
+        {
+            var fetchedData = _dbService.GetAQData(state, city);
+            return Json(fetchedData.ToList<Record>());
         }
     }
 }

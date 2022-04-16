@@ -8,31 +8,33 @@
 </div>
 
 
-<input type="button" value="Refresh Data" id="btnRefreshDb" class="btn btn-success" />
-
-<div>
-    <label for="idLastRefreshed"> Last Refreshed: </label>
-    <input id="idLastRefreshed" disabled/>
-</div>
-
+<section>
+    <div style="display:flex;justify-content:space-evenly;">
+        <div>
+           <input type="button" value="Refresh Data" id="btnRefreshDb" class="btn btn-success" />  
+        </div>
+        <div>
+             <label for="idLastRefreshed"> Last Refreshed: </label>
+            <input id="idLastRefreshed" disabled/>
+        </div>
+    </div>
+</section>
 
 <section>
-    <span>
-        Filter the records real time or leave the filters blank for a full fetch from database =>
-    </span>
     <div style="display:flex;justify-content:space-evenly;">
         <div>
             <label for="ddStates">
                 States:
             </label>
-            <select id="ddStates"  placeholder="Select State" class="form-control" onchange="aq.refreshCityListByState($event)" />
+            <select id="ddStates"  placeholder="Select State" class="form-control"></select>
         </div>
-        <div>
+         <div>
             <label for="ddCities">
                 Cities:
             </label>
-            <select id="ddCities" placeholder="Select City" class="form-control" />
-        </div>
+            <select id="ddCities" placeholder="Select City" class="form-control"></select>
+        </div>  
+             
         <div style="align-self:center;">
             <input type="button" id="btnFetchForSelection" value="Fetch" class="btn btn-success" />
         </div>
@@ -43,20 +45,48 @@
 
 <script>
     window.onload = function () {
-        let config = {
+        const config = {
+            AQDropDownStateDefault: '--Select State--',
+            AQDropDownCityDefault: '--Select City--',
             AQDbRefreshUrl: '@Url.ActionLink("AirQualityFullDbRefresh", "StoredData")',
             AQFetchUrl: '@Url.ActionLink("FetchAirQuality", "RealTime")',
             AQGetCityForStateUrl: '@Url.ActionLink("GetCityForState", "StoredData")',
             AQLastRefreshUrl: '@Url.ActionLink("GetLastRefreshed", "StoredData")',
+            AQGetStatesUrl: '@Url.ActionLink("GetAllStates", "StoredData")',
+            AQGetCitiesUrl: '@Url.ActionLink("GetAllCities", "StoredData")',
+            AQDbFetchUrl: '@Url.ActionLink("GetAQStoredIndexes", "StoredData")',
             AQTableBodyId: 'AirQualityIndexTableBody',
             AQTableId: 'AirQualityIndexTable',
             AQTableWrapper: 'AirQualityTableWrapper'
         }
-        let aq = new AQ(config);
+        const aq = new AQStoredData(config);
+        
+        $('#ddStates').change(function(){
+            let selectedState = $('#ddStates').val();
+            if(selectedState != config.AQDropDownStateDefault)
+            {
+                aq.refreshCityListByState(selectedState);        
+            }
+        })
 
         $('#btnRefreshDb').click(function () {
             aq.refreshAQRecordsInDb();
-        })
+        });
+
+        $('#btnFetchForSelection').click(function(){
+            let selectedState = $('#ddStates').val();
+            let selectedCity = $('#ddCities').val();
+            if(selectedState == config.AQDropDownStateDefault)
+            {
+                selectedState = undefined;
+            }
+            if(selectedCity == config.AQDropDownCityDefault)
+            {
+                selectedCity = undefined;
+            }
+            console.log("calling controller")
+            aq.fetchAQIndexesFromDb(selectedState, selectedCity);
+        });
 
     };
 

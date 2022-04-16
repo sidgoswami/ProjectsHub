@@ -8,6 +8,11 @@
   <ItemGroup>
     <Compile Remove="Services\AQMySqlService.cs" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Views\Home\RealTimeView.cshtml" />
+    <Content Remove="Views\Home\StoredDataView.cshtml" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="jQuery" Version="3.6.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
