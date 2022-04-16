@@ -31,17 +31,17 @@ namespace AirQualityIndex.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("AirQualityFullDbRefresh")]
-        public JsonResult AirQualityFullDbRefresh()
+        public async Task<JsonResult> AirQualityFullDbRefresh()
         {
-            var fetchedAirQuality = _airQualityDataProvider.Fetch(0, 10, "");
+            var fetchedAirQuality = await _airQualityDataProvider.Fetch(0, 10, "");
             if (fetchedAirQuality != null && fetchedAirQuality.Count > 0)
             {
-                if (_dbService.ClearTable())
+                if (await _dbService.ClearTable())
                 {
-                    var writtenToDb = _dbService.WriteToDb(fetchedAirQuality);
+                    var writtenToDb = await _dbService.WriteToDb(fetchedAirQuality);
                     if (writtenToDb.Success)
                     {
-                        string lastRefreshed = _dbService.GetLastRefreshed();
+                        string lastRefreshed = await _dbService.GetLastRefreshed();
                         var obj = new
                         {
                             Cities = fetchedAirQuality.Select(aq => aq.city).Distinct().ToList<string>(),
@@ -61,9 +61,9 @@ namespace AirQualityIndex.Controllers
         }
 
         [HttpGet("GetLastRefreshed")]
-        public JsonResult GetLastRefreshed()
+        public async Task<JsonResult> GetLastRefreshed()
         {
-            var lastRefreshed = _dbService.GetLastRefreshed();
+            var lastRefreshed = await _dbService.GetLastRefreshed();
             if (!string.IsNullOrWhiteSpace(lastRefreshed))
             {
                 var successResponse = new GenericResponse<string>(true, lastRefreshed, "Fetched Last Refresh Successfully");
@@ -79,9 +79,9 @@ namespace AirQualityIndex.Controllers
         /// <param name="state"></param>
         /// <returns></returns>
         [HttpGet("GetCityForState")]
-        public JsonResult GetCityForState(string state)
+        public async Task<JsonResult> GetCityForState(string state)
         {
-            var fetchedCities = _dbService.GetAllCities(state);
+            var fetchedCities = await _dbService.GetAllCities(state);
             if (fetchedCities != null && fetchedCities.Count > 0)
             {
                 var successResponse = new GenericResponse<List<string>>(true, fetchedCities, "Fetched cities Successfully");
@@ -96,9 +96,9 @@ namespace AirQualityIndex.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("GetAllCities")]
-        public JsonResult GetAllCities()
+        public async Task<JsonResult> GetAllCities()
         {
-            var fetchedCities = _dbService.GetAllCities();
+            var fetchedCities = await _dbService.GetAllCities();
             if (fetchedCities != null && fetchedCities.Count > 0)
             {
                 var successResponse = new GenericResponse<List<string>>(true, fetchedCities, "Fetched cities Successfully");
@@ -113,9 +113,9 @@ namespace AirQualityIndex.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("GetAllStates")]
-        public JsonResult GetAllStates()
+        public async Task<JsonResult> GetAllStates()
         {
-            var fetchedStates = _dbService.GetAllStates();
+            var fetchedStates = await _dbService.GetAllStates();
             if (fetchedStates != null && fetchedStates.Count > 0)
             {
                 var successResponse = new GenericResponse<List<string>>(true, fetchedStates, "Fetched states Successfully");
@@ -126,9 +126,9 @@ namespace AirQualityIndex.Controllers
         }
 
         [HttpGet("GetAQStoredIndexes")]
-        public JsonResult GetAQStoredIndexes(string state, string city)
+        public async Task<JsonResult> GetAQStoredIndexes(string state, string city)
         {
-            var fetchedData = _dbService.GetAQData(state, city);
+            var fetchedData = await _dbService.GetAQData(state, city);
             return Json(fetchedData.ToList<Record>());
         }
     }

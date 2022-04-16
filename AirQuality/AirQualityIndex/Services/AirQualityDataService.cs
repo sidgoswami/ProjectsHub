@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace AirQualityIndex.Services
 {
@@ -48,7 +49,7 @@ namespace AirQualityIndex.Services
             return (false, new List<Record>());
         }
 
-        public List<Record> Fetch(int offset, int limit, string filters)
+        public async Task<List<Record>> Fetch(int offset, int limit, string filters)
         {
             try
             {

@@ -22,7 +22,7 @@ namespace AirQualityIndex.Services
             _connectionString = _appSettings.ConnectionString;
         }
 
-        public bool ClearTable()
+        public async Task<bool> ClearTable()
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
@@ -53,7 +53,7 @@ namespace AirQualityIndex.Services
             }
         }
 
-        public GenericResponse<string> WriteToDb(List<Record> records)
+        public async Task<GenericResponse<string>> WriteToDb(List<Record> records)
         {
             var tableName = _appSettings.StorageTableName;
             using (SqlConnection sqlConnection = new SqlConnection(_connectionString))
@@ -80,7 +80,7 @@ namespace AirQualityIndex.Services
             }
         }
 
-        public List<string> GetAllCities(string state)
+        public async Task<List<string>> GetAllCities(string state)
         {
             try
             {
@@ -121,7 +121,7 @@ namespace AirQualityIndex.Services
             }
         }
 
-        public List<string> GetAllCities()
+        public async Task<List<string>> GetAllCities()
         {
             try
             {
@@ -160,7 +160,7 @@ namespace AirQualityIndex.Services
             }
         }
 
-        public List<string> GetAllStates()
+        public async Task<List<string>> GetAllStates()
         {
             try
             {
@@ -199,7 +199,7 @@ namespace AirQualityIndex.Services
             }
         }
 
-        public string GetLastRefreshed()
+        public async Task<string> GetLastRefreshed()
         {
             try
             {
@@ -233,7 +233,7 @@ namespace AirQualityIndex.Services
             }
         }
 
-        public DataTable GetAQData(string state, string city)
+        public async Task<DataTable> GetAQData(string state, string city)
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
             {

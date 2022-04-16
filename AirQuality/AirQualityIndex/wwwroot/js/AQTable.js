@@ -1,6 +1,12 @@
 ﻿function AQTable(config) {
     let aqTable = undefined;
 
+    const UI = {
+        AQTableBodyId: `#${config.AQTableBodyId}`,
+        AQTableId: `#${config.AQTableId}`,
+        AQTableWrapper: `#${config.AQTableWrapper}`
+    }
+
     function init() {
         hideAQTable();
     }
@@ -51,5 +57,12 @@
         //else {
         //    hideAQTable();
         //}
+    }
+
+    init();
+
+    return {
+        generateAQTable: generateAQTable,
+        hideAQTable: hideAQTable
     }
 }

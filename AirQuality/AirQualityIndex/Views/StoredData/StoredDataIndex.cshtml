@@ -45,6 +45,15 @@
 
 <script>
     window.onload = function () {
+
+        const configTable = {
+            AQTableBodyId: 'AirQualityIndexTableBody',
+            AQTableId: 'AirQualityIndexTable',
+            AQTableWrapper: 'AirQualityTableWrapper'
+        };
+
+        const objAQTable = new AQTable(configTable);
+
         const config = {
             AQDropDownStateDefault: '--Select State--',
             AQDropDownCityDefault: '--Select City--',
@@ -55,9 +64,7 @@
             AQGetStatesUrl: '@Url.ActionLink("GetAllStates", "StoredData")',
             AQGetCitiesUrl: '@Url.ActionLink("GetAllCities", "StoredData")',
             AQDbFetchUrl: '@Url.ActionLink("GetAQStoredIndexes", "StoredData")',
-            AQTableBodyId: 'AirQualityIndexTableBody',
-            AQTableId: 'AirQualityIndexTable',
-            AQTableWrapper: 'AirQualityTableWrapper'
+            AQTable: objAQTable
         }
         const aq = new AQStoredData(config);
         

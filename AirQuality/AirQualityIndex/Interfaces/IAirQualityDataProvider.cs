@@ -1,10 +1,11 @@
 ﻿using AirQualityIndex.Models;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AirQualityIndex.Interfaces
 {
     public interface IAirQualityDataProvider
     {
-        List<Record> Fetch(int offset, int limit, string filters);
+        Task<List<Record>> Fetch(int offset, int limit, string filters);
     }
 }

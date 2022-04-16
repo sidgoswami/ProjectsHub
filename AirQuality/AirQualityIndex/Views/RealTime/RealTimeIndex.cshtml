@@ -35,14 +35,23 @@
 
 <script>
     window.onload = function () {
+        const configTable = {
+            AQTableBodyId: 'AirQualityIndexTableBody',
+            AQTableId: 'AirQualityIndexTable',
+            AQTableWrapper: 'AirQualityTableWrapper'
+        };
+
+        const objAQTable = new AQTable(configTable);
+
         let config = {
             AQFetchUrl: '@Url.ActionLink("FetchAirQuality", "RealTime")',
             AQTableBodyId: 'AirQualityIndexTableBody',
             AQTableId: 'AirQualityIndexTable',
-            AQTableWrapper: 'AirQualityTableWrapper'
+            AQTableWrapper: 'AirQualityTableWrapper',
+            AQTable: objAQTable
         }
-        let aq = new AQRealTimeData(config);
 
+        const aq = new AQRealTimeData(config);
 
         $('#btnFetch').click(function () {
             let strFilter = '';

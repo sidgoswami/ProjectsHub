@@ -10,13 +10,13 @@ namespace AirQualityIndex.Interfaces
 {
     public interface IDataBaseService
     {
-        GenericResponse<string> WriteToDb(List<Record> lst);
-        bool ClearTable();
-        List<string> GetAllCities(string state);
-        List<string> GetAllCities();
-        List<string> GetAllStates();
-        string GetLastRefreshed();
+        Task<GenericResponse<string>> WriteToDb(List<Record> lst);
+        Task<bool> ClearTable();
+        Task<List<string>> GetAllCities(string state);
+        Task<List<string>> GetAllCities();
+        Task<List<string>> GetAllStates();
+        Task<string> GetLastRefreshed();
 
-        DataTable GetAQData(string state, string city);
+        Task<DataTable> GetAQData(string state, string city);
     }
 }
