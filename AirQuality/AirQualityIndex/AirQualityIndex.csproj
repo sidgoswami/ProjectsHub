@@ -25,5 +25,8 @@
   <ItemGroup>
     <ProjectReference Include="..\GeneralHelper\GeneralHelper.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="wwwroot\svg\" />
+  </ItemGroup>
 
 </Project>

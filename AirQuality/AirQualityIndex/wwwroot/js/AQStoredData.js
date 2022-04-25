@@ -26,18 +26,18 @@
     }    
 
     function refreshAQRecordsInDb() {
-        notify.info("Load started","Initializing the data load to Storage")
+        notify.info("Load started", "Initializing the data load to Storage")
+        notify.info("Loading...", null, false);
         $.ajax({
             url: `${urls.refreshAQRecordsInDb}`,
             type: "GET",
             contentType: 'application/json',
             success: function (response) {
-                console.log(data);
-                console.dir(data);
+                notify.hide();
+                console.log(response);
+                console.dir(response);
                 if (response.success) {
                     notify.success("Load Succeeded", "Data successfully loaded to storage.");
-
-                    //Call toast
                     refreshStateList(response.data.states);
                     refreshCityList(response.data.cities);
                     refreshLastRefreshLabel(response.data.lastRefreshed);
@@ -48,6 +48,7 @@
                 }                
             },
             error: function (data) {
+                notify.hide();
                 notify.error("Load Error", "Error while data loading.");
                 console.log("Exception", data);
             }
