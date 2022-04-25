@@ -1,5 +1,13 @@
 ﻿function AQTable(config) {
     let aqTable = undefined;
+    const notify = config.Notify;
+
+    const constants = {
+        initialize : "Initialize",
+        noData : "NoData"
+    }
+
+    let tableDisplayText = {}
 
     const UI = {
         AQTableBodyId: `#${config.AQTableBodyId}`,
@@ -8,7 +16,17 @@
     }
 
     function init() {
-        hideAQTable();
+        initializeTableDisplayText();
+        initializeTable();
+    }
+
+    function initializeTableDisplayText() {
+        tableDisplayText[constants.initialize] = "Please enter data in filters or press button for fetch all.";
+        tableDisplayText[constants.noData] = "No data available for the selected filter"
+    }
+
+    function initializeTable() {
+        generateAQTable([], constants.initialize)
     }
 
     function clearTableBody() {
@@ -33,23 +51,27 @@
         console.log(tablehtml);
         $.each(tableContent, function (index, value) {
             tablehtml += `<tr>
-                                    <td>${value.id}</td>
-                                    <td>${value.country}</td>
-                                    <td>${value.state}</td>
-                                    <td>${value.city}</td>
-                                    <td>${value.station}</td>
-                                    <td>${value.last_update}</td>
-                                    <td>${value.pollutant_id}</td>
-                                    <td>${value.pollutant_min}</td>
-                                    <td>${value.pollutant_max}</td>
-                                    <td>${value.pollutant_avg}</td>
-                                    <td>${value.pollutant_unit}</td>
-                                </tr>`;
+                                <td>${value.id}</td>
+                                <td>${value.country}</td>
+                                <td>${value.state}</td>
+                                <td>${value.city}</td>
+                                <td>${value.station}</td>
+                                <td>${value.last_update}</td>
+                                <td>${value.pollutant_id}</td>
+                                <td>${value.pollutant_min}</td>
+                                <td>${value.pollutant_max}</td>
+                                <td>${value.pollutant_avg}</td>
+                                <td>${value.pollutant_unit}</td>
+                            </tr>`;
         });
         $(UI.AQTableBodyId).html(tablehtml);
+        let displayText = tableDisplayText[constants.noData];
+        if (filters == constants.initialize) {
+            displayText = tableDisplayText[constants.initialize];
+        }
         aqTable = $(UI.AQTableId).DataTable({
             "language": {
-                "emptyTable": `<span class="alert">No data available for the selected filter : ${filters}</span>`
+                "emptyTable": `<span class="alert">${displayText}</span>`
             }
         });
         showAQTable();

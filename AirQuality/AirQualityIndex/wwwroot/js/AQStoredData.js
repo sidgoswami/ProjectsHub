@@ -1,5 +1,6 @@
 ﻿function AQStoredData(config) {   
     let objAQTable;
+    const notify = config.Notify;
 
     const UI = {
         ddCities: "#ddCities",
@@ -17,14 +18,15 @@
     }
     
     function init() {
+        notify.info("Inside Stored Data View")
         objAQTable = config.AQTable;
-        objAQTable.hideAQTable();
         refreshLastRefreshLabel();
         refreshAllCities();
         refreshAllStates();
     }    
 
     function refreshAQRecordsInDb() {
+        notify.info("Load started","Initializing the data load to Storage")
         $.ajax({
             url: `${urls.refreshAQRecordsInDb}`,
             type: "GET",
@@ -33,7 +35,7 @@
                 console.log(data);
                 console.dir(data);
                 if (response.success) {
-                    alert("The DB records are now refreshed");
+                    notify.success("Load Succeeded", "Data successfully loaded to storage.");
 
                     //Call toast
                     refreshStateList(response.data.states);
@@ -41,11 +43,13 @@
                     refreshLastRefreshLabel(response.data.lastRefreshed);
                 }
                 else {
-                    alert("Unable to refresh table in database");
+                    notify.error("Load Error", "Error while data loading.");
+                    console.log("Error", response.message);
                 }                
             },
             error: function (data) {
-                console.log(data);
+                notify.error("Load Error", "Error while data loading.");
+                console.log("Exception", data);
             }
         });
     }
@@ -81,12 +85,13 @@
                         lastRefresh = response.data;
                     }
                     else {
-                        alert(`${response.message}. Please refresh the stored records`);
+                        notify.error("Load Error", `${response.message}. Please refresh the stored records.`);                       
                         lastRefresh = 'NA';
                     }
                     $(UI.lblLastRefreshed).val(lastRefresh);
                 },
                 error: function (data) {
+                    notify.error("Load Error", "Error while loading last refresh.");
                     console.log(data);
                 }
             });
@@ -113,10 +118,11 @@
                     refreshCityList(response.data);
                 }
                 else {
-                    alert("Unable to refresh dropdown for city.");
+                    notify.error("Dropdown Refresh Error", "Unable to refresh dropdown for city.");                    
                 }
             },
             error: function (data) {
+                notify.error("Load Error", "Error while loading last refresh.");
                 console.log(data);
             }
         });
@@ -136,10 +142,11 @@
                     refreshCityList(response.data);
                 }
                 else {
-                    alert("Unable to refresh dropdown for city.");
+                    notify.error("Load Error", "Error while refreshing city dropdown.");
                 }
             },
             error: function (data) {
+                notify.error("Load Error", "Error while loading last refresh.");
                 console.log(data);
             }
         });
@@ -159,17 +166,17 @@
                     refreshStateList(response.data);
                 }
                 else {
-                    alert("Unable to refresh dropdown for state.");
+                    notify.error("Load Error", "Error while loading last refresh.");                    
                 }
             },
             error: function (data) {
+                notify.error("Load Exception", "Error while loading last refresh.");
                 console.log(data);
             }
         });
     }
 
     function fetchAQIndexesFromDb(state, city) {
-        console.log("calling controller 2")
         let input = {
             state: state,
             city: city
@@ -180,11 +187,11 @@
             contentType: 'application/json',
             data: input,
             success: function (data) {
-                console.log("controller success response");
-                console.dir(data);
+                notify.success("Success", "Data successfully added to table.");
                 objAQTable.generateAQTable(data, `State:${state}-City:${city}`);
             },
             error: function (data) {
+                notify.error("Load Error", "Error while loading last refresh.");
                 console.log(data);
             }
         });

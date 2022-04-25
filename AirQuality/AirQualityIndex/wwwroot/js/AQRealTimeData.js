@@ -1,13 +1,14 @@
 ﻿function AQRealTimeData(config) {
     let objAQTable = undefined;
+    const notify = config.Notify;
 
     const urls = {
         fetchRealTime: config.AQFetchUrl
     }
 
     function init() {
+        notify.info("Inside Real Data View");       
         objAQTable = config.AQTable
-        objAQTable.hideAQTable();
     }
 
     function fetchAQIndexes(offset, limit, filters) {
@@ -23,8 +24,10 @@
             data: input,
             success: function (data) {
                 objAQTable.generateAQTable(data, filters);
+                notify.success("Success", "Data successfully added to table.");
             },
             error: function (data) {
+                notify.error("API Fetch Error", "Error while fetching data from API.");
                 console.log(data);
             }
         });

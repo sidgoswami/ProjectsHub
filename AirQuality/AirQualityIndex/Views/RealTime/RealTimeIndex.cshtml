@@ -2,11 +2,6 @@
     ViewData["Title"] = "RealTime";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Real Time View</h1>
-</div>
-
-
 <section>
     <span>
         Filter the records real time or leave the filters blank for a full fetch
@@ -32,14 +27,17 @@
 <br />
 <partial name="_AQTablePartialView"/>
 
-
 <script>
     window.onload = function () {
+        const notify = new CustomToast();
+
         const configTable = {
             AQTableBodyId: 'AirQualityIndexTableBody',
             AQTableId: 'AirQualityIndexTable',
-            AQTableWrapper: 'AirQualityTableWrapper'
+            AQTableWrapper: 'AirQualityTableWrapper',
+            Notify: notify
         };
+
 
         const objAQTable = new AQTable(configTable);
 
@@ -48,7 +46,8 @@
             AQTableBodyId: 'AirQualityIndexTableBody',
             AQTableId: 'AirQualityIndexTable',
             AQTableWrapper: 'AirQualityTableWrapper',
-            AQTable: objAQTable
+            AQTable: objAQTable,
+            Notify: notify
         }
 
         const aq = new AQRealTimeData(config);
@@ -74,6 +73,5 @@
             strFilter = strFilter.substr(0, strFilter.length - 1);
             aq.fetchAQIndexes(0, 10, strFilter);//state,Bihar;city,Arrah
         })
-
     };
 </script>

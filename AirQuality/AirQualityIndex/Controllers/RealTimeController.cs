@@ -22,9 +22,9 @@ namespace AirQualityIndex.Controllers
 
         [HttpGet("FetchAirQuality")]
         [ResponseCache(CacheProfileName = "filtersProfile" )]
-        public JsonResult FetchAirQuality(int offset, int limit, string filters)
+        public async Task<JsonResult> FetchAirQuality(int offset, int limit, string filters)
         {
-            var fetchedAirQuality = _airQualityDataProvider.Fetch(offset, limit, filters); //(0, 10, "[city]=Darbhanga");
+            var fetchedAirQuality = await _airQualityDataProvider.Fetch(offset, limit, filters); //(0, 10, "[city]=Darbhanga");
             return Json(fetchedAirQuality);
         }
     }

@@ -23,7 +23,7 @@ namespace AirQualityIndex.Services
             _apiKey = _appSettings.ApiKey;
         }
         /// <summary>
-        /// 
+        /// Fetches the data from the government provided api based on the parameters provided
         /// </summary>
         /// <param name="offset"></param>
         /// <param name="limit"></param>
@@ -49,6 +49,13 @@ namespace AirQualityIndex.Services
             return (false, new List<Record>());
         }
 
+        /// <summary>
+        /// Fetch ALL the data for the selected filters 
+        /// </summary>
+        /// <param name="offset"></param>
+        /// <param name="limit"></param>
+        /// <param name="filters"></param>
+        /// <returns></returns>
         public async Task<List<Record>> Fetch(int offset, int limit, string filters)
         {
             try
@@ -73,7 +80,7 @@ namespace AirQualityIndex.Services
         }
 
         /// <summary>
-        /// converts an enumerator string with each element coming in format <key;value> to &filters[a]=b&filters[c]=d
+        /// Converts an enumerator string with each element coming in format <key;value> to &filters[a]=b&filters[c]=d
         /// </summary>
         /// <param name="filters"></param>
         /// <returns></returns>
@@ -89,7 +96,7 @@ namespace AirQualityIndex.Services
             return sb.ToString();
         }
         /// <summary>
-        /// Converts an input in format  a,b;c,d to &filters[a]=b&filters[c]=d
+        /// Converts an input in format  a,b;c,d to &filters[a]=b&filters[c]=d which is understood by the government provided API
         /// </summary>
         /// <param name="filters"></param>
         /// <returns></returns>

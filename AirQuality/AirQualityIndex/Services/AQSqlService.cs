@@ -250,6 +250,10 @@ namespace AirQualityIndex.Services
                 {
                     query = $"SELECT * FROM AirQualityRecords WHERE city = @city ";
                 }
+                else
+                {
+                    query = $"SELECT * FROM AirQualityRecords";
+                }
                 using (var sqlCommand = new SqlCommand(query, sqlConnection))
                 {
                     try
