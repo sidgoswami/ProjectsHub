@@ -69,3 +69,11 @@ body {
   white-space: nowrap;
   line-height: 60px; /* Vertically center the text there */
 }
+
+.small-size {
+    width:15px;
+}
+
+.medium-size {
+    width: 22px;
+}

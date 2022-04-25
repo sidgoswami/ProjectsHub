@@ -7,15 +7,24 @@
     <span class="glyphicon glyphicon-refresh"></span>
 </label>
 <section>
-    <div style="display:flex;justify-content:space-evenly;">
-        <div>
-            <button type="button" class="btn btn-success"  id="btnRefreshDb">
-                <img src=~/svg/arrow-clockwise.svg/>
-            </button>
-        </div>
-        <div>
-             <label for="idLastRefreshed"> Last Refreshed: </label>
-            <input id="idLastRefreshed" disabled/>
+    <div style="display:flex; justify-content:right;">
+        <div style="font-size: 15px;">
+            <table>
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td><label for="idLastRefreshed">Last Refreshed:</label></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button type="button" class="btn btn-success" id="btnRefreshDb">
+                                <img class="small-size" src="/svg/arrow-clockwise.svg">
+                            </button>
+                        </td>
+                        <td><input id="idLastRefreshed" disabled style="font-size: 15px;"></td>
+                    </tr>
+                </tbody>
+            </table>    
         </div>
     </div>
 </section>
@@ -36,7 +45,9 @@
         </div>  
              
         <div style="align-self:center;">
-            <input type="button" id="btnFetchForSelection" value="Fetch" class="btn btn-success" />
+            <button type="button" id="btnFetchForSelection" class="btn btn-success">
+                <img class="medium-size" src=~/svg/cloud-arrow-down.svg />
+            </button>
         </div>
     </div>
 </section>
